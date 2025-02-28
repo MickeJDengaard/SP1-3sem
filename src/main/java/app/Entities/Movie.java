@@ -1,45 +1,33 @@
 package app.Entities;
 
+import app.Entities.Genre;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
-@Data
+@Table(name = "movies")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Movie {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String title;
-    private LocalDate releaseDate;
-    private Double rating;
+    private String releaseDate;
+    private double popularity;
+    private double voteAverage;
+    private int voteCount;
 
     @ManyToMany
     @JoinTable(
-            name = "movie_genre",
+            name = "movie_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> genres = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "movie_actor",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "actor_id")
-    )
-    private List<Actor> actors = new ArrayList<>();
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<Director> directors = new ArrayList<>();
+    private List<Genre> genres;
 }
