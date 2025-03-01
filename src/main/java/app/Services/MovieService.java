@@ -3,6 +3,7 @@ package app.Services;
 import app.DTO.MovieDTO;
 import app.Entities.Genre;
 import app.Entities.Movie;
+import app.Entities.ProductionCompany;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -100,12 +101,24 @@ public class MovieService {
         movie.setVoteAverage(dto.getVoteAverage());
         movie.setVoteCount(dto.getVoteCount());
 
+        // Konverter genre-IDs til Genre-objekter | Så ved kan vi hente genre-navne fra genreMap.
         List<Genre> genres = dto.getGenreIds().stream()
                 .map(id -> new Genre(id, genreMap.get(id), null))
                 .toList();
         movie.setGenres(genres);
 
+
+        List<ProductionCompany> companies = (dto.getProductionCompanies() != null) ?
+                dto.getProductionCompanies().stream()
+                        .map(pc -> new ProductionCompany(pc.getId(), pc.getName(), pc.getLogoPath(), pc.getOriginCountry()))
+                        .toList()
+                : List.of(); // Hvis der ikke bliver fundet noget produktionsselskab, så returneres en tom liste
+
+        movie.setProductionCompanies(companies);
+
         return movie;
     }
+
+
 
 }

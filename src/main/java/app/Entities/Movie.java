@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Movie {
 
     @Id
@@ -23,11 +24,20 @@ public class Movie {
     private double voteAverage;
     private int voteCount;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "movie_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private List<Genre> genres;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "movie_production_companies",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
+    private List<ProductionCompany> productionCompanies;
+
 }
