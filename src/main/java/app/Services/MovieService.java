@@ -27,6 +27,7 @@ public class MovieService {
         fetchGenres(); // Hent genrer, når service initialiseres
     }
 
+
     // Henter alle genrer fra TMDb og gemmer dem i genreMap
     private void fetchGenres() throws IOException, InterruptedException {
         String url = BASE_URL + "genre/movie/list?api_key=" + API_KEY + "&language=en-US";
@@ -188,7 +189,6 @@ public class MovieService {
 
         return movie;
     }
-
 
 
 }

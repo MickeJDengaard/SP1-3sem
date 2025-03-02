@@ -3,6 +3,7 @@ package app.Entities;
 import app.Entities.Genre;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,8 +17,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Movie {
+@Data
 
+public class Movie {
     @Id
     private int id;
 
