@@ -1,10 +1,8 @@
 package app.config;
 
 
-import app.Entities.Genre;
-import app.Entities.ProductionCompany;
+import app.Entities.*;
 import app.utils.Utils;
-import app.Entities.Movie;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -44,7 +42,10 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(Movie.class);
         configuration.addAnnotatedClass(Genre.class);
         configuration.addAnnotatedClass(ProductionCompany.class);
+        configuration.addAnnotatedClass(Actor.class);  // Tilføj skuespillere
+        configuration.addAnnotatedClass(Director.class);  // Tilføj instruktører
     }
+
 
 
     private static EntityManagerFactory createEMF(boolean forTest) {
@@ -75,7 +76,7 @@ public class HibernateConfig {
 
     private static Properties setBaseProperties(Properties props) {
         props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-        props.put("hibernate.hbm2ddl.auto", "create");  // set to "update" when in production
+        props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.current_session_context_class", "thread");
         props.put("hibernate.show_sql", "false");
         props.put("hibernate.format_sql", "false");
