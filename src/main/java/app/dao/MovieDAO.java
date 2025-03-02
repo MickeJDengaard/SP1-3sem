@@ -56,7 +56,6 @@ public class MovieDAO {
     }
 
 
-
     public List<Movie> getAllMovies() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -69,14 +68,7 @@ public class MovieDAO {
     public List<Movie> findByTitle(String title) {
         EntityManager em = emf.createEntityManager();
         try {
-            TypedQuery<Movie> query = em.createQuery(
-                    "SELECT DISTINCT m FROM Movie m " +
-                            "LEFT JOIN FETCH m.genres " +
-                            "LEFT JOIN FETCH m.directors " +
-                            "LEFT JOIN FETCH m.actors " +
-                            "WHERE LOWER(m.title) LIKE LOWER(:title)",
-                    Movie.class
-            );
+            TypedQuery<Movie> query = em.createQuery("SELECT DISTINCT m FROM Movie m " + "LEFT JOIN FETCH m.genres " + "LEFT JOIN FETCH m.directors " + "LEFT JOIN FETCH m.actors " + "WHERE LOWER(m.title) LIKE LOWER(:title)", Movie.class);
             query.setParameter("title", "%" + title + "%");
             return query.getResultList();
         } finally {
@@ -109,9 +101,7 @@ public class MovieDAO {
     public List<Movie> getRandomMovies(int limit) {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery("SELECT m FROM Movie m ORDER BY FUNCTION('RANDOM')", Movie.class)
-                    .setMaxResults(limit)
-                    .getResultList();
+            return em.createQuery("SELECT m FROM Movie m ORDER BY FUNCTION('RANDOM')", Movie.class).setMaxResults(limit).getResultList();
         } finally {
             em.close();
         }
@@ -120,9 +110,7 @@ public class MovieDAO {
     public double getAverageRating() {
         EntityManager em = emf.createEntityManager();
         try {
-            Double avg = em.createQuery(
-                            "SELECT AVG(m.voteAverage) FROM Movie m", Double.class)
-                    .getSingleResult();
+            Double avg = em.createQuery("SELECT AVG(m.voteAverage) FROM Movie m", Double.class).getSingleResult();
             return avg != null ? avg : 0.0; // Hvis ingen film, returner 0.0
         } finally {
             em.close();
@@ -132,9 +120,7 @@ public class MovieDAO {
     public List<Movie> getTop10HighestRatedMovies() {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery(
-                            "SELECT m FROM Movie m ORDER BY m.voteAverage DESC", Movie.class)
-                    .setMaxResults(10) // Begræns til top-10
+            return em.createQuery("SELECT m FROM Movie m ORDER BY m.voteAverage DESC", Movie.class).setMaxResults(10) // Begræns til top-10
                     .getResultList();
         } finally {
             em.close();
@@ -144,28 +130,86 @@ public class MovieDAO {
     public List<Movie> getTop10LowestRatedMovies() {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery(
-                            "SELECT m FROM Movie m ORDER BY m.voteAverage ASC", Movie.class)
-                    .setMaxResults(10)
-                    .getResultList();
+            return em.createQuery("SELECT m FROM Movie m ORDER BY m.voteAverage ASC", Movie.class).setMaxResults(10).getResultList();
         } finally {
             em.close();
         }
     }
+
     public List<Movie> getTop10MostPopularMovies() {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery(
-                            "SELECT m FROM Movie m ORDER BY m.popularity DESC", Movie.class)
-                    .setMaxResults(10)
-                    .getResultList();
+            return em.createQuery("SELECT m FROM Movie m ORDER BY m.popularity DESC", Movie.class).setMaxResults(10).getResultList();
         } finally {
             em.close();
         }
     }
 
+    public void updateMovieTitleAndReleaseDate(int movieId, String newTitle, String newReleaseDate) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Movie movie = em.find(Movie.class, movieId);
+            if (movie != null) {
+                movie.setTitle(newTitle);
+                movie.setReleaseDate(newReleaseDate);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
 
+    }
 
+    public void deleteMovie(int movieId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Movie movie = em.find(Movie.class, movieId);
+            if (movie != null) {
+                em.remove(movie);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void addMovie(Movie movie) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            for (Genre genre : movie.getGenres()) {
+                if (em.find(Genre.class, genre.getId()) == null) {
+                    em.persist(genre);
+                }
+            }
+
+            for (ProductionCompany company : movie.getProductionCompanies()) {
+                if (em.find(ProductionCompany.class, company.getId()) == null) {
+                    em.persist(company);
+                }
+            }
+
+            for (Actor actor : movie.getActors()) {
+                if (em.find(Actor.class, actor.getId()) == null) {
+                    em.persist(actor);
+                }
+            }
+
+            for (Director director : movie.getDirectors()) {
+                if (em.find(Director.class, director.getId()) == null) {
+                    em.persist(director);
+                }
+            }
+
+            em.persist(movie);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 
 
 }

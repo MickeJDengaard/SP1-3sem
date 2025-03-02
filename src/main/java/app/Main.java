@@ -20,7 +20,7 @@ public class Main {
         MovieDAO movieDAO = new MovieDAO(emf);
 
 
-        if (!movieDAO.hasMovies()) {
+       /* if (!movieDAO.hasMovies()) {
             System.out.println("🎥 Henter film fra The Movie Database API...");
             List<MovieDTO> movies = movieService.fetchAllMovies(58);
 
@@ -145,11 +145,23 @@ public class Main {
                     }
                 }
             }
-        }
+        }*/
+        /*Movie newMovie = new Movie();
+        newMovie.setId(9999);
+        newMovie.setTitle("Min Nye Film");
+        newMovie.setReleaseDate("2025-03-01");
+        newMovie.setPopularity(8.5);
+        newMovie.setVoteAverage(7.9);
+        newMovie.setVoteCount(100);
 
+        movieDAO.addMovie(newMovie);
 
+        movieDAO.updateMovieTitleAndReleaseDate(9999, "Min nye film opdateret", "2022-03-01");*/
+
+        movieDAO.deleteMovie(01);
 
     }
+
 }
 
 
