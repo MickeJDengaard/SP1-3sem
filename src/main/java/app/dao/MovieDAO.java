@@ -117,6 +117,54 @@ public class MovieDAO {
         }
     }
 
+    public double getAverageRating() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Double avg = em.createQuery(
+                            "SELECT AVG(m.voteAverage) FROM Movie m", Double.class)
+                    .getSingleResult();
+            return avg != null ? avg : 0.0; // Hvis ingen film, returner 0.0
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Movie> getTop10HighestRatedMovies() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT m FROM Movie m ORDER BY m.voteAverage DESC", Movie.class)
+                    .setMaxResults(10) // Begræns til top-10
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Movie> getTop10LowestRatedMovies() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT m FROM Movie m ORDER BY m.voteAverage ASC", Movie.class)
+                    .setMaxResults(10)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    public List<Movie> getTop10MostPopularMovies() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT m FROM Movie m ORDER BY m.popularity DESC", Movie.class)
+                    .setMaxResults(10)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+
 
 
 

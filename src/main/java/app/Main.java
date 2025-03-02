@@ -43,7 +43,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\n🔍 Indtast en film-titel for at søge, skriv 'random' for at få 5 tilfældige film, eller 'exit' for at afslutte:");
+            System.out.println("\n🔍 Indtast en film-titel for at søge, skriv 'random' for 5 tilfældige film, 'list' for alle film,");
+            System.out.println("'average' for gennemsnitsvurdering, 'top10high' for de bedste 10 film, 'top10low' for de dårligste 10 film, 'top10popular' for de mest populære film, eller 'exit' for at afslutte:");
             String input = scanner.nextLine();
 
             if (input.equalsIgnoreCase("exit")) {
@@ -65,6 +66,39 @@ public class Main {
                 System.out.println("📜 Her er en liste over alle film i databasen:");
                 for (Movie movie : allMovies) {
                     System.out.println("- " + movie.getTitle() + " (" + movie.getReleaseDate() + ")");
+                }
+                continue;
+            }
+
+            if (input.equalsIgnoreCase("average")) {
+                double avgRating = movieDAO.getAverageRating();
+                System.out.println("⭐ Gennemsnitlig vurdering af alle film: " + avgRating);
+                continue;
+            }
+
+            if (input.equalsIgnoreCase("top10high")) {
+                List<Movie> topMovies = movieDAO.getTop10HighestRatedMovies();
+                System.out.println("🏆 Top 10 bedst bedømte film:");
+                for (Movie movie : topMovies) {
+                    System.out.println("- " + movie.getTitle() + " | Rating: " + movie.getVoteAverage());
+                }
+                continue;
+            }
+
+            if (input.equalsIgnoreCase("top10low")) {
+                List<Movie> worstMovies = movieDAO.getTop10LowestRatedMovies();
+                System.out.println("👎 Top 10 dårligst bedømte film:");
+                for (Movie movie : worstMovies) {
+                    System.out.println("- " + movie.getTitle() + " | Rating: " + movie.getVoteAverage());
+                }
+                continue;
+            }
+
+            if (input.equalsIgnoreCase("top10popular")) {
+                List<Movie> popularMovies = movieDAO.getTop10MostPopularMovies();
+                System.out.println("🔥 Top 10 mest populære film:");
+                for (Movie movie : popularMovies) {
+                    System.out.println("- " + movie.getTitle() + " | Popularitet: " + movie.getPopularity());
                 }
                 continue;
             }
