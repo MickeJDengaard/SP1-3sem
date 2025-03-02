@@ -30,6 +30,7 @@ This project is a Java application that fetches movie data from **The Movie Data
 ## 🔧 Installation & Setup
 ### 1️⃣ **Clone the repository**
 ```bash
-git clone [https://github.com/your-github-repo/MovieDatabase.git](https://github.com/MickeJDengaard/SP1-3sem.git)
+git clone https://github.com/MickeJDengaard/SP1-3sem.git
+```
 validate pom.xml if not stored in cache
 Setup neon.tech database in config.properties file.
