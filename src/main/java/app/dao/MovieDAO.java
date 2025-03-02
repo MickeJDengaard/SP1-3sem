@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MovieDAO {
 
-    public EntityManagerFactory emf;
+    private EntityManagerFactory emf;
 
     public MovieDAO(EntityManagerFactory emf) {
         this.emf = emf;

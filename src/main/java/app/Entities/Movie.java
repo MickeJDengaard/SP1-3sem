@@ -16,11 +16,8 @@ import java.util.List;
 @ToString
 @Data
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Movie {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private int id;
 
     private String title;

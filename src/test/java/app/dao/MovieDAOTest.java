@@ -101,8 +101,10 @@ class MovieDAOTest {
         // Yderligere kontrol: De tilfældigt valgte film skal findes i den samlede liste
         List<Movie> allMovies = movieDAO.getAllMovies();
         randomTwo.forEach(movie ->
-                assertThat("Den tilfældigt valgte film skal findes i den samlede liste", allMovies,
-                        hasItem(movie))
+                assertThat("Den tilfældigt valgte film skal findes i den samlede liste",
+                        allMovies.stream().map(Movie::getId).toList(),
+                        hasItem(movie.getId()))
+
         );
     }
 }
