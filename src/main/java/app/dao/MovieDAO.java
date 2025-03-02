@@ -11,10 +11,15 @@ import java.util.List;
 
 public class MovieDAO {
 
-    private EntityManagerFactory emf;
+    public EntityManagerFactory emf;
 
     public MovieDAO(EntityManagerFactory emf) {
         this.emf = emf;
+    }
+
+
+    public EntityManagerFactory getEntityManagerFactory() {
+        return this.emf;
     }
 
     public void save(Movie movie) {
@@ -43,6 +48,7 @@ public class MovieDAO {
             em.close();
         }
     }
+
 
 
     public List<Movie> getAllMovies() {

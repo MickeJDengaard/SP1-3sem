@@ -3,6 +3,7 @@ package app.Entities;
 import app.Entities.Genre;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -13,9 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Movie {
+@Data
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Movie {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private int id;
 
     private String title;
