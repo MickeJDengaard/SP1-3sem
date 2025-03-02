@@ -1,0 +1,206 @@
+@startuml
+' ================================
+' Pakke: app.config
+' ================================
+package "app.config" {
+  class HibernateConfig {
+    +setTest(test: Boolean)
+    +getTest(): Boolean
+    +getEntityManagerFactory(): EntityManagerFactory
+    +getEntityManagerFactoryForTest(): EntityManagerFactory
+  }
+}
+
+' ================================
+' Pakke: app.dao
+' ================================
+package "app.dao" {
+  class MovieDAO {
+    +save(movie: Movie): void
+    +addMovie(movie: Movie): void
+    +getAllMovies(): List<Movie>
+    +findByTitle(title: String): List<Movie>
+    +hasMovies(): boolean
+    +countMovies(): Long
+    +getRandomMovies(limit: int): List<Movie>
+    +getAverageRating(): double
+    +getTop10HighestRatedMovies(): List<Movie>
+    +getTop10LowestRatedMovies(): List<Movie>
+    +getTop10MostPopularMovies(): List<Movie>
+    +updateMovieTitleAndReleaseDate(movieId: int, newTitle: String, newReleaseDate: String): void
+    +deleteMovie(movieId: int): void
+  }
+}
+
+' ================================
+' Pakke: app.Entities
+' ================================
+package "app.Entities" {
+  class Movie {
+    - id: int
+    - title: String
+    - releaseDate: String
+    - popularity: double
+    - voteAverage: double
+    - voteCount: int
+    - genres: List<Genre>
+    - productionCompanies: List<ProductionCompany>
+    - actors: Set<Actor>
+    - directors: Set<Director>
+  }
+
+  class Actor {
+    - id: int
+    - name: String
+    - movies: List<Movie>
+  }
+
+  class Director {
+    - id: int
+    - name: String
+    - movies: List<Movie>
+  }
+
+  class Genre {
+    - id: int
+    - name: String
+    - movies: List<Movie>
+  }
+
+  class ProductionCompany {
+    - id: Long
+    - name: String
+    - logoPath: String
+    - originCountry: String
+  }
+}
+
+Movie "1" -- "*" Genre : contains >
+Movie "1" -- "*" ProductionCompany : uses >
+Movie "1" -- "*" Actor : has >
+Movie "1" -- "*" Director : directed by >
+
+' ================================
+' Pakke: app.DTO
+' ================================
+package "app.DTO" {
+  class MovieDTO {
+    - adult: boolean
+    - backdropPath: String
+    - budget: int
+    - genreIds: List<Integer>
+    - homepage: String
+    - id: int
+    - imdbId: String
+    - originCountry: List<String>
+    - originalLanguage: String
+    - originalTitle: String
+    - overview: String
+    - popularity: double
+    - posterPath: String
+    - releaseDate: String
+    - revenue: long
+    - runtime: int
+    - status: String
+    - tagline: String
+    - title: String
+    - video: boolean
+    - voteAverage: double
+    - voteCount: int
+    - productionCompanies: List<ProductionCompanyDTO>
+  }
+
+  class ProductionCompanyDTO {
+    - id: Long
+    - name: String
+    - logoPath: String
+    - originCountry: String
+  }
+
+  class CreditsDTO {
+    - cast: List<CastDTO>
+  }
+
+  class CastDTO {
+    - adult: boolean
+    - gender: int
+    - id: int
+    - knownForDepartment: String
+    - name: String
+    - originalName: String
+    - popularity: double
+    - profilePath: String
+    - castId: int
+    - character: String
+    - creditId: String
+    - order: int
+  }
+
+  class ProductionCountryDTO {
+    - countryCode: String
+    - name: String
+  }
+
+  class GenreDTO {
+    - id: int
+    - name: String
+  }
+
+  class SpokenLanguageDTO {
+    - countryCode: String
+    - name: String
+    - englishName: String
+  }
+}
+
+MovieDTO "1" -- "*" ProductionCompanyDTO : contains
+
+' ================================
+' Pakke: app.Services
+' ================================
+package "app.Services" {
+  class MovieService {
+    - dotenv: Dotenv
+    - API_KEY: String
+    - BASE_URL: String
+    - client: HttpClient
+    - objectMapper: ObjectMapper
+    - genreMap: Map<Integer, String>
+    + MovieService() throws IOException, InterruptedException
+    - fetchGenres(): void
+    + getGenres(genreIds: List<Integer>): String
+    + fetchAllMovies(totalPages: int): List<MovieDTO>
+    - fetchMovies(page: int): String
+    + fetchActors(movieId: int): List<Actor>
+    + fetchDirectors(movieId: int): List<Director>
+    + convertDTOtoEntity(dto: MovieDTO): Movie
+  }
+}
+
+' ================================
+' Pakke: app.exceptions
+' ================================
+package "app.exceptions" {
+  class ApiException {
+    - code: int
+    + ApiException(code: int, msg: String)
+    + getCode(): int
+  }
+}
+
+' ================================
+' Pakke: app (Main)
+' ================================
+package "app" {
+  class Main {
+    + main(args: String[]): void
+  }
+}
+
+' -------------------------------
+' Afhængigheder og relationer
+' -------------------------------
+Main --> MovieService : uses
+Main --> MovieDAO : uses
+
+@enduml
