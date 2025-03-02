@@ -32,5 +32,5 @@ This project is a Java application that fetches movie data from **The Movie Data
 ```bash
 git clone https://github.com/MickeJDengaard/SP1-3sem.git
 ```
-validate pom.xml if not stored in cache
-Setup neon.tech database in config.properties file.
+### validate pom.xml if not stored in cache
+### Setup neon.tech database in config.properties file.
