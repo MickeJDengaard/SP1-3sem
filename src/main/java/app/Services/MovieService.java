@@ -1,9 +1,7 @@
 package app.Services;
 
 import app.DTO.MovieDTO;
-import app.Entities.Genre;
-import app.Entities.Movie;
-import app.Entities.ProductionCompany;
+import app.Entities.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -50,6 +48,8 @@ public class MovieService {
         }
     }
 
+
+
     // Matcher genre-ID'er med navne og returnerer en kommasepareret liste
     public String getGenres(List<Integer> genreIds) {
         List<String> genreNames = new ArrayList<>();
@@ -80,8 +80,17 @@ public class MovieService {
         return allMovies;
     }
 
+    //Metode der bliver brugt til at hente de korrekte film fra TMDb API
     private static String fetchMovies(int page) throws IOException, InterruptedException {
-        String url = BASE_URL + "discover/movie?api_key=" + API_KEY + "&page=" + page;
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int startYear = currentYear - 5; // Beregner det tidligste år
+
+        String url = BASE_URL + "discover/movie?api_key=" + API_KEY +
+                "&page=" + page +
+                "&with_original_language=da" +  // Kun danske film
+                "&primary_release_date.gte=" + startYear + "-01-01" + // Film fra de sidste 5 år
+                "&sort_by=release_date.desc"; // Nyeste først
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("accept", "application/json")
@@ -92,7 +101,60 @@ public class MovieService {
         return response.body();
     }
 
-    public Movie convertDTOtoEntity(MovieDTO dto) {
+    // Henter cast og crew fra TMDb API
+    public List<Actor> fetchActors(int movieId) throws IOException, InterruptedException {
+        String url = BASE_URL + "movie/" + movieId + "/credits?api_key=" + API_KEY;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("accept", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonNode rootNode = objectMapper.readTree(response.body());
+        JsonNode castArray = rootNode.get("cast");
+
+        List<Actor> actors = new ArrayList<>();
+        for (JsonNode node : castArray) {
+            if (actors.size() >= 10) break; // Begræns antal skuespillere per film
+
+            int id = node.get("id").asInt();
+            String name = node.get("name").asText();
+            actors.add(new Actor(id, name, new ArrayList<>()));
+        }
+
+        return actors;
+    }
+
+
+    public List<Director> fetchDirectors(int movieId) throws IOException, InterruptedException {
+        String url = BASE_URL + "movie/" + movieId + "/credits?api_key=" + API_KEY;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("accept", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonNode rootNode = objectMapper.readTree(response.body());
+        JsonNode crewArray = rootNode.get("crew");
+
+        List<Director> directors = new ArrayList<>();
+        for (JsonNode node : crewArray) {
+            if (node.get("job").asText().equals("Director")) {
+                int id = node.get("id").asInt();
+                String name = node.get("name").asText();
+                directors.add(new Director(id, name, new ArrayList<>()));
+            }
+        }
+
+        return directors;
+    }
+
+
+    public Movie convertDTOtoEntity(MovieDTO dto) throws IOException, InterruptedException {
         Movie movie = new Movie();
         movie.setId(dto.getId());
         movie.setTitle(dto.getTitle());
@@ -101,20 +163,28 @@ public class MovieService {
         movie.setVoteAverage(dto.getVoteAverage());
         movie.setVoteCount(dto.getVoteCount());
 
-        // Konverter genre-IDs til Genre-objekter | Så ved kan vi hente genre-navne fra genreMap.
+        // Hent genrer
         List<Genre> genres = dto.getGenreIds().stream()
                 .map(id -> new Genre(id, genreMap.get(id), null))
                 .toList();
         movie.setGenres(genres);
 
-
+        // Hent produktionsselskaber
         List<ProductionCompany> companies = (dto.getProductionCompanies() != null) ?
                 dto.getProductionCompanies().stream()
                         .map(pc -> new ProductionCompany(pc.getId(), pc.getName(), pc.getLogoPath(), pc.getOriginCountry()))
                         .toList()
-                : List.of(); // Hvis der ikke bliver fundet noget produktionsselskab, så returneres en tom liste
-
+                : List.of();
         movie.setProductionCompanies(companies);
+
+    // Hent og tilføj skuespillere
+        Set<Actor> actors = new HashSet<>(fetchActors(dto.getId())); // Konverter List til Set
+        movie.setActors(actors != null ? actors : new HashSet<>()); // Brug HashSet istedet for ArrayList
+
+    // Hent og tilføj instruktører
+        Set<Director> directors = new HashSet<>(fetchDirectors(dto.getId())); // Konverter List til Set
+        movie.setDirectors(directors != null ? directors : new HashSet<>());
+
 
         return movie;
     }
