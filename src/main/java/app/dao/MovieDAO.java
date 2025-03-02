@@ -27,23 +27,34 @@ public class MovieDAO {
         try {
             em.getTransaction().begin();
 
-            // Gem genrer, hvis de ikke allerede findes
-            for (Genre genre : movie.getGenres()) {
-                if (em.find(Genre.class, genre.getId()) == null) {
-                    em.persist(genre);
+            // Tjek, om filmen allerede findes
+            Movie existingMovie = em.find(Movie.class, movie.getId());
+            if (existingMovie != null) {
+                System.out.println("Filmen med ID " + movie.getId() + " findes allerede.");
+                em.merge(movie); // Opdater filmen i stedet for at indsætte den
+            } else {
+                // Gem genrer, hvis de ikke allerede findes
+                for (Genre genre : movie.getGenres()) {
+                    if (em.find(Genre.class, genre.getId()) == null) {
+                        em.persist(genre);
+                    }
                 }
+
+                // Gem produktionsselskaber, hvis de ikke allerede findes
+                for (ProductionCompany company : movie.getProductionCompanies()) {
+                    if (em.find(ProductionCompany.class, company.getId()) == null) {
+                        em.persist(company);
+                    }
+                }
+
+                // Gem selve filmen
+                em.persist(movie);
             }
 
-            // Gem produktionsselskaber, hvis de ikke allerede findes
-            for (ProductionCompany company : movie.getProductionCompanies()) {
-                if (em.find(ProductionCompany.class, company.getId()) == null) {
-                    em.persist(company);
-                }
-            }
-
-            // Gem selve filmen
-            em.persist(movie);
             em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
