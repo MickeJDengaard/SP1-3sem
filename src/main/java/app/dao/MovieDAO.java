@@ -55,7 +55,7 @@ public class MovieDAO {
         }
     }
 
-
+    //Hent alle film
     public List<Movie> getAllMovies() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -65,6 +65,7 @@ public class MovieDAO {
         }
     }
 
+    //Find film efter titel
     public List<Movie> findByTitle(String title) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -98,6 +99,7 @@ public class MovieDAO {
     }
 
 
+    // Få tilfældige film vist
     public List<Movie> getRandomMovies(int limit) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -107,6 +109,7 @@ public class MovieDAO {
         }
     }
 
+    // Få gennemsnitlig rating
     public double getAverageRating() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -117,6 +120,7 @@ public class MovieDAO {
         }
     }
 
+    // Få de 10 højest ratet film
     public List<Movie> getTop10HighestRatedMovies() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -127,6 +131,7 @@ public class MovieDAO {
         }
     }
 
+    // Få de 10 lavest rated film
     public List<Movie> getTop10LowestRatedMovies() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -136,6 +141,7 @@ public class MovieDAO {
         }
     }
 
+    // Få de 10 mest populære film
     public List<Movie> getTop10MostPopularMovies() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -145,6 +151,7 @@ public class MovieDAO {
         }
     }
 
+    // Opdater film titel og udgivelses år
     public void updateMovieTitleAndReleaseDate(int movieId, String newTitle, String newReleaseDate) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -161,6 +168,7 @@ public class MovieDAO {
 
     }
 
+    // Slet film
     public void deleteMovie(int movieId) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -175,6 +183,7 @@ public class MovieDAO {
         }
     }
 
+    // Tilføj film
     public void addMovie(Movie movie) {
         EntityManager em = emf.createEntityManager();
         try {

@@ -180,7 +180,7 @@ public class MovieService {
 
     // Hent og tilføj skuespillere
         Set<Actor> actors = new HashSet<>(fetchActors(dto.getId())); // Konverter List til Set
-        movie.setActors(actors != null ? actors : new HashSet<>()); // Brug HashSet istedet for ArrayList
+        movie.setActors(actors != null ? actors : new HashSet<>());
 
     // Hent og tilføj instruktører
         Set<Director> directors = new HashSet<>(fetchDirectors(dto.getId())); // Konverter List til Set

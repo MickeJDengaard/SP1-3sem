@@ -41,7 +41,7 @@ public class MovieDTO {
     private String posterPath;
 
     @JsonProperty("release_date")
-    private String releaseDate; // Gemmes som String, men kan konverteres til LocalDate, hvis nødvendigt.
+    private String releaseDate;
 
     private long revenue;
     private int runtime;
