@@ -22,7 +22,7 @@ This project is a Java application that fetches movie data from **The Movie Data
 - **Hibernate & JPA**  
 - **Neon.tech (PostgreSQL hosting)**  
 - **TMDb API** (for fetching movie data)  
-- **Jakarta Persistence (JPA)**  
+- **Lombok**  
 - **Maven**  
 
 ---
