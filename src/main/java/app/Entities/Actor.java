@@ -6,16 +6,19 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Data
+@Table(name = "actors")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Actor {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String name;
 
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "actors", fetch = FetchType.LAZY)
     private List<Movie> movies;
 }

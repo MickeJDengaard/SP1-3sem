@@ -6,17 +6,17 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Data
+@Table(name = "genres")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Genre {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
+    @Id
+    private int id;
     private String name;
 
     @ManyToMany(mappedBy = "genres")
-    private List<Movie> movies;
+    private List<app.Entities.Movie> movies;
 }
-

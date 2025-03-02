@@ -1,8 +1,8 @@
 package app.config;
 
 
+import app.Entities.*;
 import app.utils.Utils;
-
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -39,8 +39,14 @@ public class HibernateConfig {
 
     // TODO: IMPORTANT: Add Entity classes here for them to be registered with Hibernate
     private static void getAnnotationConfiguration(Configuration configuration) {
-        // configuration.addAnnotatedClass(Point.class);
+        configuration.addAnnotatedClass(Movie.class);
+        configuration.addAnnotatedClass(Genre.class);
+        configuration.addAnnotatedClass(ProductionCompany.class);
+        configuration.addAnnotatedClass(Actor.class);  // Tilføj skuespillere
+        configuration.addAnnotatedClass(Director.class);  // Tilføj instruktører
     }
+
+
 
     private static EntityManagerFactory createEMF(boolean forTest) {
         try {
@@ -70,7 +76,7 @@ public class HibernateConfig {
 
     private static Properties setBaseProperties(Properties props) {
         props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-        props.put("hibernate.hbm2ddl.auto", "create");  // set to "update" when in production
+        props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.current_session_context_class", "thread");
         props.put("hibernate.show_sql", "false");
         props.put("hibernate.format_sql", "false");
@@ -90,20 +96,23 @@ public class HibernateConfig {
         String DBName = Utils.getPropertyValue("DB_NAME", "config.properties");
         String DB_USERNAME = Utils.getPropertyValue("DB_USERNAME", "config.properties");
         String DB_PASSWORD = Utils.getPropertyValue("DB_PASSWORD", "config.properties");
-        props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/" + DBName);
+        String CONNECTION_STR = Utils.getPropertyValue("CONNECTION_STR", "config.properties");
+
+        props.put("hibernate.connection.url", CONNECTION_STR + DBName);
         props.put("hibernate.connection.username", DB_USERNAME);
         props.put("hibernate.connection.password", DB_PASSWORD);
+        props.put("hibernate.connection.sslmode", "require"); // Tilføj SSL mode som krævet af Neon.tech
         return props;
     }
 
+
     private static Properties setTestProperties(Properties props) {
         props.put("hibernate.connection.driver_class", "org.testcontainers.jdbc.ContainerDatabaseDriver");
-        props.put("hibernate.connection.url", "jdbc:tc:postgresql:15.3-alpine3.18:///test_db");
-        props.put("hibernate.connection.username", "postgres");
-        props.put("hibernate.connection.password", "postgres");
-        props.put("hibernate.archive.autodetection", "class");
-        props.put("hibernate.show_sql", "true");
-        props.put("hibernate.hbm2ddl.auto", "create-drop"); // update for production
+        props.put("hibernate.connection.url", "jdbc:tc:postgresql:16.2:///test_db");
+        props.put("hibernate.archive.autodetection", "hbm,class");
+        props.put("hibernate.show_sql", "false");
+        props.put("hibernate.hbm2ddl.auto", "create-drop");
         return props;
     }
+
 }

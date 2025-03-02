@@ -55,4 +55,7 @@ public class MovieDTO {
 
     @JsonProperty("vote_count")
     private int voteCount;
+
+    @JsonProperty("production_companies")
+    private List<ProductionCompanyDTO> productionCompanies;
 }
